@@ -1,0 +1,89 @@
+# Misc ########################
+Scratch.java
+ScratchTest.java
+
+
+# for Vert.x ##################
+mods
+
+
+# for Java ####################
+*.class
+
+
+# for IDEA ####################
+*.iml
+*.ipr
+*.iws
+.idea/libraries
+.idea/gradle.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/uiDesigner.xml
+.idea/workspace.xml
+out/
+
+
+# for Gradle ####################
+.gradle
+target/
+build/
+
+
+# for Eclipse ####################
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath
+
+
+# for Windows ####################
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+
+# for OSX ####################
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+
+# for wercker ################
+.wercker
