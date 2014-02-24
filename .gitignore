@@ -5,6 +5,7 @@ ScratchTest.java
 
 # for Vert.x ##################
 mods
+vertx_classpath.txt
 
 
 # for Java ####################
