@@ -1,0 +1,4 @@
+{
+  "main": "groovy:kaba.toolapps.server.HttpServer",
+  "auto-redeploy": true
+}
