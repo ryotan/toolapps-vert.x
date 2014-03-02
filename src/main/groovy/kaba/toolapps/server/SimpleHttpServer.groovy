@@ -1,21 +1,21 @@
 package kaba.toolapps.server
-
+import org.vertx.groovy.core.http.HttpServer
 import org.vertx.groovy.core.http.HttpServerRequest
 import org.vertx.groovy.platform.Verticle
-
 /**
  * シンプルなHTTPサーバ
  *
  * @author Ryo TANAKA
  * @since 1.0
  */
-class HttpServer extends Verticle {
+class SimpleHttpServer extends Verticle {
 
     @Override
     def start() {
-        vertx.createHttpServer().requestHandler { HttpServerRequest req ->
+        HttpServer server = vertx.createHttpServer()
+        server.requestHandler { HttpServerRequest req ->
             req.response.end("Hello World!!!")
-        }.listen(4321)
+        }.listen(container.config.get("http").get("server").get("port"))
     }
 
     @Override
