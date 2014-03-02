@@ -15,7 +15,7 @@ class SimpleHttpServer extends Verticle {
         HttpServer server = vertx.createHttpServer()
         server.requestHandler { HttpServerRequest req ->
             req.response.end("Hello World!!!")
-        }.listen(container.config.get("http").get("server").get("port"))
+        }.listen(container.config.get("http.server.port") as int)
     }
 
     @Override

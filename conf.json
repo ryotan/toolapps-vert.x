@@ -1,9 +1,5 @@
 // Example JSON config file
 
 {
-  "http": {
-    "server": {
-      "port": 9999
-    }
-  }
+  "http.server.port": 4321
 }
