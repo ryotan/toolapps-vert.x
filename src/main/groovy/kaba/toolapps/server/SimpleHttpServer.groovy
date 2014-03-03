@@ -27,7 +27,7 @@ class SimpleHttpServer extends Verticle {
         yoke.use(new Logger())
         yoke.use(new ErrorHandler(false))
         yoke.use(new Favicon())
-        yoke.use('/static', new Static('.'))
+        yoke.use('/', new Static('./client'))
         yoke.use('/', new BodyParser())
         yoke.use(
             new GRouter().
