@@ -1,4 +1,5 @@
 package kaba.toolapps.server
+
 import com.jetdrone.vertx.yoke.GYoke
 import com.jetdrone.vertx.yoke.middleware.BodyParser
 import com.jetdrone.vertx.yoke.middleware.ErrorHandler
@@ -7,8 +8,11 @@ import com.jetdrone.vertx.yoke.middleware.GRouter
 import com.jetdrone.vertx.yoke.middleware.Logger
 import com.jetdrone.vertx.yoke.middleware.Static
 import com.jetdrone.vertx.yoke.middleware.YokeRequest
+import kaba.toolapps.digest.MessageDigest
+import org.vertx.groovy.core.eventbus.Message
 import org.vertx.groovy.platform.Verticle
 import org.vertx.java.core.Handler
+
 /**
  * シンプルなHTTPサーバ
  *
@@ -31,9 +35,13 @@ class SimpleHttpServer extends Verticle {
                     request.response().end('Hello, Encrypted world!!!')
                 }.
                 get('/digest') { YokeRequest request, Handler<?> next ->
-                    request.response().end('Hello, Digesting world!!!')
+                    vertx.eventBus.send("message-digest", request.body(), { Message msg ->
+                        request.response().end("${msg.body()}\nHello, Digesting world!!!")
+                    })
                 }
         )
+
+        container.deployWorkerVerticle("groovy:${MessageDigest.canonicalName}")
 
         int port = container.config['http.server.port'] as int
         yoke.listen(port, "0.0.0.0")
