@@ -27,6 +27,12 @@ class SimpleHttpServer extends Verticle {
         yoke.use(new Logger())
         yoke.use(new ErrorHandler(false))
         yoke.use(new Favicon())
+        yoke.use('/', { YokeRequest req, Handler<Object> next ->
+            if (req.path() == '/') {
+                req.response().sendFile('./client/index.html')
+            }
+            next.handle(null)
+        })
         yoke.use('/', new Static('./client'))
         yoke.use('/', new BodyParser())
         yoke.use(
