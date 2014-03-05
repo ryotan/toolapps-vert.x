@@ -30,8 +30,9 @@ class SimpleHttpServer extends Verticle {
         yoke.use('/', { YokeRequest req, Handler<Object> next ->
             if (req.path() == '/') {
                 req.response().sendFile('./client/index.html')
+            } else {
+                next.handle(null)
             }
-            next.handle(null)
         })
         yoke.use('/', new Static('./client'))
         yoke.use('/', new BodyParser())
