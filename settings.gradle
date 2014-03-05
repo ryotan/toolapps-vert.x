@@ -1,0 +1,8 @@
+rootProject.name = 'toolapps'
+
+['client'].each { sub ->
+    include sub
+    project(":${sub}").with {
+        buildFileName = "${sub.replace(':', '-')}.gradle"
+    }
+}
