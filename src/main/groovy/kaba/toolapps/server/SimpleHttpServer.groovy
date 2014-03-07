@@ -1,5 +1,4 @@
 package kaba.toolapps.server
-
 import com.jetdrone.vertx.yoke.GYoke
 import com.jetdrone.vertx.yoke.middleware.BodyParser
 import com.jetdrone.vertx.yoke.middleware.ErrorHandler
@@ -11,8 +10,8 @@ import com.jetdrone.vertx.yoke.middleware.YokeRequest
 import kaba.toolapps.digest.MessageDigest
 import org.vertx.groovy.core.eventbus.Message
 import org.vertx.groovy.platform.Verticle
+import org.vertx.java.core.AsyncResult
 import org.vertx.java.core.Handler
-
 /**
  * シンプルなHTTPサーバ
  *
@@ -20,6 +19,10 @@ import org.vertx.java.core.Handler
  * @since 1.0
  */
 class SimpleHttpServer extends Verticle {
+
+    private static final List<String> workers = Collections.unmodifiableList([
+        MessageDigest.canonicalName,
+    ])
 
     @Override
     def start() {
@@ -48,7 +51,11 @@ class SimpleHttpServer extends Verticle {
                 }
         )
 
-        container.deployWorkerVerticle("groovy:${MessageDigest.canonicalName}")
+        workers.each {
+            // デプロイされた Worker Verticle は、この Verticle がアンデプロイされた時に、
+            // 自動的にアンデプロイされる。
+            deployWorker(it)
+        }
 
         int port = container.config['http.server.port'] as int
         yoke.listen(port, "0.0.0.0")
@@ -57,5 +64,19 @@ class SimpleHttpServer extends Verticle {
 
     @Override
     def stop() {
+    }
+
+    /**
+     * {@code worker} をGroovyのWorker Verticleとしてコンテナにデプロイする。
+     *
+     * @param worker デプロイしたいWorker Verticle
+     */
+    private void deployWorker(String worker) {
+        container.deployWorkerVerticle("groovy:${worker}", { AsyncResult<String> result ->
+            if (result.failed()) {
+                throw new RuntimeException("Failed to deploy ${worker}.", result.cause())
+            }
+            container.logger.info("Successfully deployed ${worker}.")
+        })
     }
 }
