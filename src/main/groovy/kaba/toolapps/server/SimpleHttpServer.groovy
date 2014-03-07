@@ -7,7 +7,7 @@ import com.jetdrone.vertx.yoke.middleware.GRouter
 import com.jetdrone.vertx.yoke.middleware.Logger
 import com.jetdrone.vertx.yoke.middleware.Static
 import com.jetdrone.vertx.yoke.middleware.YokeRequest
-import kaba.toolapps.digest.MessageDigest
+import kaba.toolapps.digest.DigestVerticle
 import org.vertx.groovy.core.eventbus.Message
 import org.vertx.groovy.platform.Verticle
 import org.vertx.java.core.AsyncResult
@@ -21,7 +21,7 @@ import org.vertx.java.core.Handler
 class SimpleHttpServer extends Verticle {
 
     private static final List<String> workers = Collections.unmodifiableList([
-        MessageDigest.canonicalName,
+        DigestVerticle.canonicalName,
     ])
 
     @Override
