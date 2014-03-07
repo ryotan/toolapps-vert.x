@@ -2,6 +2,7 @@ package kaba.toolapps.digest
 import org.vertx.groovy.platform.Verticle
 import org.vertx.java.core.Handler
 import org.vertx.java.core.eventbus.Message
+import org.vertx.java.core.json.JsonObject
 
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -13,7 +14,7 @@ import java.util.concurrent.ConcurrentMap
  * @author Ryo TANAKA
  * @since 1.0
  */
-class DigestVerticle extends Verticle implements Handler<Message> {
+class DigestVerticle extends Verticle implements Handler<Message<JsonObject>> {
 
     /**
      * {@link MessageDigest} のキャッシュ。
@@ -28,11 +29,12 @@ class DigestVerticle extends Verticle implements Handler<Message> {
         vertx.eventBus.javaEventBus().registerHandler("message-digest", this)
     }
 
-    void handle(Message event) {
-        String body = event.body() as String
-        if (body != null) {
+    void handle(Message<JsonObject> event) {
+        JsonObject body = event.body()
+        String target = body.getString("target")
+        if (target) {
             try {
-                byte[] digest1 = getDigest("sha256").digest(body.getBytes())
+                byte[] digest1 = getDigest("sha-256").digest(target.getBytes())
                 event.reply(digest1.encodeBase64().toString())
             } catch (NoSuchAlgorithmException e) {
                 event.reply("No Such Algorithm sha256. Cause: ${e.message}")
@@ -49,7 +51,7 @@ class DigestVerticle extends Verticle implements Handler<Message> {
      */
     private static MessageDigest getDigest(String algorithm) {
         ThreadLocal<MessageDigest> digest = DIGESTS.get(algorithm)
-        if (digest != null) {
+        if (digest) {
             return digest.get()
         }
         DIGESTS.putIfAbsent(algorithm, new ThreadLocal<MessageDigest>() {

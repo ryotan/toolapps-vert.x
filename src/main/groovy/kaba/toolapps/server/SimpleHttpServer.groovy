@@ -45,7 +45,7 @@ class SimpleHttpServer extends Verticle {
                     request.response().end('Hello, Encrypted world!!!')
                 }.
                 get('/digest') { YokeRequest request, Handler<?> next ->
-                    vertx.eventBus.send("message-digest", request.getParameter("target"), { Message msg ->
+                    vertx.eventBus.send("message-digest", [target: request.getParameter("target")], { Message msg ->
                         request.response().end("${msg.body()}\nHello, Digesting world!!!")
                     })
                 }
