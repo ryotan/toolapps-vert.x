@@ -1,4 +1,5 @@
 package kaba.toolapps.digest
+
 import org.vertx.groovy.platform.Verticle
 import org.vertx.java.core.Handler
 import org.vertx.java.core.eventbus.Message
@@ -8,6 +9,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+
 /**
  * SHA-256などのハッシュ化関数を使用して、ハッシュ値を計算するVerticle。
  *
@@ -34,13 +36,25 @@ class DigestVerticle extends Verticle implements Handler<Message<JsonObject>> {
         String target = body.getString("target")
         if (target) {
             try {
-                byte[] digest1 = getDigest("sha-256").digest(target.getBytes())
-                event.reply(digest1.encodeBase64().toString())
+                byte[] digest = getDigest("sha-256").digest(target.getBytes())
+                JsonObject res = new JsonObject()
+                res.putString("status", "ok")
+                res.putString("raw", target)
+                res.putString("digest", digest.encodeBase64().toString())
+                event.reply(res)
             } catch (NoSuchAlgorithmException e) {
-                event.reply("No Such Algorithm sha256. Cause: ${e.message}")
+                JsonObject res = new JsonObject()
+                res.putString("status", "ng")
+                res.putString("raw", target)
+                res.putString("message", "No Such Algorithm sha256. Cause: ${e.message}")
+                event.reply(res)
             }
         }
-        event.reply("")
+        JsonObject res = new JsonObject()
+        res.putString("status", "ok")
+        res.putString("raw", "")
+        res.putString("digest", "")
+        event.reply(res)
     }
 
     /**
