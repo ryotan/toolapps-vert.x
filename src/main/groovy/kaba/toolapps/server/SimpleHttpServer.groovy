@@ -12,6 +12,7 @@ import com.jetdrone.vertx.yoke.middleware.ResponseTime
 import com.jetdrone.vertx.yoke.middleware.Static
 import com.jetdrone.vertx.yoke.middleware.Timeout
 import com.jetdrone.vertx.yoke.middleware.YokeRequest
+import com.jetdrone.vertx.yoke.middleware.YokeResponse
 import kaba.toolapps.digest.DigestVerticle
 import org.vertx.groovy.core.eventbus.Message
 import org.vertx.groovy.platform.Verticle
@@ -55,8 +56,16 @@ class SimpleHttpServer extends Verticle {
                     request.response().end('Hello, Encrypted world!!!')
                 }.
                 get('/digest') { YokeRequest request, Handler<?> next ->
+                    YokeResponse response = request.response()
                     vertx.eventBus.send("message-digest", createDigestRequest(request), { Message msg ->
-                        request.response().end(msg.body() as JsonObject)
+                        JsonObject res = msg.body() as JsonObject
+                        String status = res.getString("status")
+                        if ("ok" == status.toLowerCase()) {
+                            request.response().end(res)
+                        } else {
+                            response.setStatusCode(400)
+                            response.end(res)
+                        }
                     })
                 }
         )

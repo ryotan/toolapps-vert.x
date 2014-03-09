@@ -34,6 +34,7 @@ class DigestVerticle extends Verticle implements Handler<Message<JsonObject>> {
     void handle(Message<JsonObject> event) {
         JsonObject body = event.body()
         String target = body.getString("target")
+        container.logger.info("target: ${target}")
         if (target) {
             try {
                 byte[] digest = getDigest("sha-256").digest(target.getBytes())
@@ -51,9 +52,8 @@ class DigestVerticle extends Verticle implements Handler<Message<JsonObject>> {
             }
         }
         JsonObject res = new JsonObject()
-        res.putString("status", "ok")
-        res.putString("raw", "")
-        res.putString("digest", "")
+        res.putString("status", "ng")
+        res.putString("message", "Digest source string must be specified.")
         event.reply(res)
     }
 
