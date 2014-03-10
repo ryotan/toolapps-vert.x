@@ -1,5 +1,5 @@
 {
-  "main": "groovy:kaba.toolapps.server.SimpleHttpServer",
+  "main": "groovy:net.itr0.toolapps.server.SimpleHttpServer",
   "includes": "com.jetdrone~yoke~1.0.5",
   "auto-redeploy": true
 }

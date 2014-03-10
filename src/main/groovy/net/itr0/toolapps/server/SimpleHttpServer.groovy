@@ -1,4 +1,4 @@
-package kaba.toolapps.server
+package net.itr0.toolapps.server
 
 import com.jetdrone.vertx.yoke.GYoke
 import com.jetdrone.vertx.yoke.middleware.BodyParser
@@ -13,7 +13,7 @@ import com.jetdrone.vertx.yoke.middleware.Static
 import com.jetdrone.vertx.yoke.middleware.Timeout
 import com.jetdrone.vertx.yoke.middleware.YokeRequest
 import com.jetdrone.vertx.yoke.middleware.YokeResponse
-import kaba.toolapps.digest.DigestVerticle
+import net.itr0.toolapps.digest.DigestVerticle
 import org.vertx.groovy.core.eventbus.Message
 import org.vertx.groovy.platform.Verticle
 import org.vertx.java.core.AsyncResult
