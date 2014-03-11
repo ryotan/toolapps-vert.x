@@ -8,5 +8,12 @@ package net.itr0.toolapps.domain.convert;
  */
 public interface ByteArrayConverter {
 
+    /**
+     * Converts a byte array value to another byte array.
+     *
+     * @param value raw byte array
+     *
+     * @return converted byte array
+     */
     byte[] convert(byte[] value);
 }
