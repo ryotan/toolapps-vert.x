@@ -19,7 +19,7 @@ abstract class MessageDigestConverterSupport implements ByteArrayConverter {
         try {
             return md.digest(value)
         } finally {
-            md.reset()
+            md?.reset()
         }
     }
 }
