@@ -102,11 +102,6 @@ class SimpleHttpServer extends Verticle {
     private static JsonObject createDigestRequest(YokeRequest request) {
         def req = new JsonObject()
         def target = request.getParameter("target")
-        if (!target) {
-            def response = request.response()
-            response.setStatusCode(400)
-            throw new IllegalArgumentException("Digest source must be specified.")
-        }
         req.putString("target", target)
     }
 }

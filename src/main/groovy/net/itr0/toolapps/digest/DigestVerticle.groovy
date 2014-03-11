@@ -42,8 +42,9 @@ class DigestVerticle extends Verticle implements Handler<Message<JsonObject>> {
             }
         }
         JsonObject res = new JsonObject()
-        res.putString("status", "ng")
-        res.putString("message", "Digest source string must be specified.")
+        res.putString("status", "ok")
+        res.putString("raw", target)
+        res.putString("digest", "")
         event.reply(res)
     }
 }
