@@ -1,2 +1,9 @@
-<input type="text" ng-model="raw" ng-change="getDigest()" placeholder="Text to digest...." />
-{{raw}} => {{digest}}
+<form role="form">
+  <div class="form-group">
+    <label for="digest_input">String to digest</label>
+    <input type="text" class="form-control" id="digest_input" ng-model="raw" ng-change="getDigest()" placeholder="Text to digest...." />
+  </div>
+</form>
+<div class="alert alert-success">
+  {{digest}}
+</div>
