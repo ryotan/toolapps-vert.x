@@ -56,7 +56,7 @@ dependencies {
   testCompile "com.foo:foo-lib:1.0.1" - for test time deps
   provided "com.foo:foo-lib:1.0.1" - if you DON'T want it to be packaged in the module zip
   */
-  provided "com.jetdrone:yoke:1.0.5"
+  provided "com.jetdrone:yoke:1.0.6"
 
   // If you're creating Groovy compiled verticles you may need the following dependencies
   provided "org.codehaus.groovy:groovy-all:$groovyVersion"

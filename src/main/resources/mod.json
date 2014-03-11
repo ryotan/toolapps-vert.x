@@ -1,5 +1,5 @@
 {
   "main": "groovy:net.itr0.toolapps.server.SimpleHttpServer",
-  "includes": "com.jetdrone~yoke~1.0.5",
+  "includes": "com.jetdrone~yoke~1.0.6",
   "auto-redeploy": true
 }
