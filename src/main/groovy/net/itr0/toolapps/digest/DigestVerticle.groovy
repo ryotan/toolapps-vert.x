@@ -24,7 +24,6 @@ class DigestVerticle extends Verticle implements Handler<Message<JsonObject>> {
     void handle(Message<JsonObject> event) {
         JsonObject body = event.body()
         String target = body.getString("target")
-        container.logger.info("target: ${target}")
         if (target) {
             try {
                 byte[] digest = new Sha256Converter().convert(target.getBytes())
