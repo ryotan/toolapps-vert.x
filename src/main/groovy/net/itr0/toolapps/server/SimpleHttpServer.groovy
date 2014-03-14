@@ -54,7 +54,6 @@ class SimpleHttpServer extends Verticle {
             new GRouter().
                 get('/encrypt') { YokeRequest request, Handler<?> next ->
                     request.response().end('Hello, Encrypted world!!!')
-                    next.handle(null)
                 }.
                 get('/digest') { YokeRequest request, Handler<?> next ->
                     YokeResponse response = request.response()
@@ -67,7 +66,6 @@ class SimpleHttpServer extends Verticle {
                             response.setStatusCode(400)
                             response.end(res)
                         }
-                        next.handle(null)
                     })
                 }
         )
