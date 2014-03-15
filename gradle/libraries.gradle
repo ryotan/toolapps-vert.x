@@ -1,0 +1,59 @@
+repositories {
+    // 環境変数 GRADLE_ENABLE_MAVENLOCAL に 'true' が設定されている場合だけ、
+    // mavenLocal() をリポジトリとして利用するようにする。（開発者用のリポジトリだから。）
+    if (System.getenv("GRADLE_ENABLE_MAVENLOCAL") == 'true') {
+        mavenLocal()
+    }
+
+    mavenCentral()
+}
+
+ext {
+    libraries = [
+        logback: [
+            dependencies.create('ch.qos.logback:logback-core:+'),
+            dependencies.create('ch.qos.logback:logback-classic:+'),
+            dependencies.create('ch.qos.logback:logback-access:+'),
+        ],
+
+        spock  : [
+            dependencies.create('org.spockframework:spock-core:+') {
+                exclude module: 'groovy-all'
+                exclude module: 'junit-dep'
+            },
+            dependencies.create('cglib:cglib-nodep:2.2.2'),
+            dependencies.create('org.objenesis:objenesis:1.2'),
+        ],
+
+        spock18: [
+            dependencies.create('org.spockframework:spock-core:0.7-groovy-1.8') {
+                exclude module: 'groovy-all'
+                exclude module: 'junit-dep'
+            },
+            dependencies.create('cglib:cglib-nodep:2.2.2'),
+            dependencies.create('org.objenesis:objenesis:1.2'),
+        ],
+
+        junit  : dependencies.create('junit:junit:+'),
+
+        groovy : dependencies.create('org.codehaus.groovy:groovy-all:+'),
+
+        gpars  : dependencies.create('org.codehaus.gpars:gpars:+'),
+
+        slf4j  : dependencies.create('org.slf4j:slf4j-api:+'),
+
+        h2     : dependencies.create('com.h2database:h2:+'),
+
+        vertx  : [
+            lib      : [
+                dependencies.create("io.vertx:vertx-core:+"),
+                dependencies.create("io.vertx:vertx-platform:+"),
+                dependencies.create("io.vertx:lang-groovy:+@jar"),
+            ],
+            testtools: [
+                dependencies.create("io.vertx:testtools:+"),
+            ],
+        ],
+
+    ]
+}

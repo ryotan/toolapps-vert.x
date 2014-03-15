@@ -67,10 +67,10 @@ class Static extends Middleware {
     @Override
     void handle(YokeRequest request, Handler<Object> next) {
         if (request.path() == '/') {
-            request.response().headers().add([
-                "date"         : httpDateFormat.format(new Date()),
-                "cache-control": "public, max-age=${maxAge}",
-            ])
+            //            request.response().headers().add([
+            //                "date"         : httpDateFormat.format(new Date()),
+            //                "cache-control": "public, max-age=${maxAge}",
+            //            ])
             request.response().sendFile("${root}index.html")
         } else {
             next.handle(null)
