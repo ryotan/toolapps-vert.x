@@ -49,64 +49,65 @@ install - install any jars produced to the local Maven repository (.m2)
  */
 
 dependencies {
-  /*
-  Add your module jar dependencies here
-  E.g.
-  compile "com.foo:foo-lib:1.0.1" - for compile time deps - this will end up in your module too!
-  testCompile "com.foo:foo-lib:1.0.1" - for test time deps
-  provided "com.foo:foo-lib:1.0.1" - if you DON'T want it to be packaged in the module zip
-  */
-  provided "com.jetdrone:yoke:1.0.6"
+    /*
+    Add your module jar dependencies here
+    E.g.
+    compile "com.foo:foo-lib:1.0.1" - for compile time deps - this will end up in your module too!
+    testCompile "com.foo:foo-lib:1.0.1" - for test time deps
+    provided "com.foo:foo-lib:1.0.1" - if you DON'T want it to be packaged in the module zip
+    */
+    provided "com.jetdrone:yoke:1.0.6"
 
-  // If you're creating Groovy compiled verticles you may need the following dependencies
-  provided "org.codehaus.groovy:groovy-all:$groovyVersion"
-  provided "io.vertx:lang-groovy:$groovyLangModVersion@jar"
+    // If you're creating Groovy compiled verticles you may need the following dependencies
+    provided "org.codehaus.groovy:groovy-all:$groovyVersion"
+    provided "io.vertx:lang-groovy:$groovyLangModVersion@jar"
 
+    testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
 }
 
 test {
-  /* Configure which tests are included
-  include 'org/foo/**'
-  exclude 'org/boo/**'
-  */
-
+    /* Configure which tests are included
+    include 'org/foo/**'
+    exclude 'org/boo/**'
+    */
 }
 
 /*
 If you're uploading stuff to Maven, Gradle needs to generate a POM.
 Please edit the details below.
  */
+
 def configurePom(def pom) {
-  pom.project {
-    name rootProject.name
-      description 'Tool Application'
-      inceptionYear '2014'
-      packaging 'jar'
+    pom.project {
+        name rootProject.name
+        description 'Tool Application'
+        inceptionYear '2014'
+        packaging 'jar'
 
-      url 'https://github.com/ryotan/toolapps'
-
-      developers {
-      developer {
-          id 'ryotan'
-          name 'Ryo TANAKA'
-          email 'xxx'
-      }
-    }
-
-    scm {
         url 'https://github.com/ryotan/toolapps'
-    }
 
-    licenses {
-      license {
-          name 'The MIT License'
-          url 'http://opensource.org/licenses/MIT'
-          distribution 'repo'
-      }
-    }
+        developers {
+            developer {
+                id 'ryotan'
+                name 'Ryo TANAKA'
+                email 'xxx'
+            }
+        }
 
-    properties {
-      setProperty('project.build.sourceEncoding', 'UTF8')
+        scm {
+            url 'https://github.com/ryotan/toolapps'
+        }
+
+        licenses {
+            license {
+                name 'The MIT License'
+                url 'http://opensource.org/licenses/MIT'
+                distribution 'repo'
+            }
+        }
+
+        properties {
+            setProperty('project.build.sourceEncoding', 'UTF8')
+        }
     }
-  }
 }
