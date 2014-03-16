@@ -44,6 +44,8 @@ ext {
 
         h2     : dependencies.create('com.h2database:h2:+'),
 
+        guice: dependencies.create('com.google.inject:guice:4.0-beta'),
+
         vertx  : [
             lib      : [
                 dependencies.create("io.vertx:vertx-core:+"),
