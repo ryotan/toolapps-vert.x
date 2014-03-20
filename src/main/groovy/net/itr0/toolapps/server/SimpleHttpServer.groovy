@@ -9,7 +9,6 @@ import com.jetdrone.vertx.yoke.middleware.Limit
 import com.jetdrone.vertx.yoke.middleware.Logger
 import com.jetdrone.vertx.yoke.middleware.ResponseTime
 import com.jetdrone.vertx.yoke.middleware.Router
-import com.jetdrone.vertx.yoke.middleware.Static
 import com.jetdrone.vertx.yoke.middleware.Timeout
 import com.jetdrone.vertx.yoke.middleware.YokeRequest
 import net.itr0.toolapps.digest.DigestHandler
