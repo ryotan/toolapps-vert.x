@@ -5,20 +5,18 @@ import com.jetdrone.vertx.yoke.middleware.BodyParser
 import com.jetdrone.vertx.yoke.middleware.Compress
 import com.jetdrone.vertx.yoke.middleware.ErrorHandler
 import com.jetdrone.vertx.yoke.middleware.Favicon
-import com.jetdrone.vertx.yoke.middleware.GRouter
 import com.jetdrone.vertx.yoke.middleware.Limit
 import com.jetdrone.vertx.yoke.middleware.Logger
 import com.jetdrone.vertx.yoke.middleware.ResponseTime
+import com.jetdrone.vertx.yoke.middleware.Router
 import com.jetdrone.vertx.yoke.middleware.Static
 import com.jetdrone.vertx.yoke.middleware.Timeout
 import com.jetdrone.vertx.yoke.middleware.YokeRequest
-import com.jetdrone.vertx.yoke.middleware.YokeResponse
+import net.itr0.toolapps.digest.DigestHandler
 import net.itr0.toolapps.digest.DigestVerticle
-import org.vertx.groovy.core.eventbus.Message
 import org.vertx.groovy.platform.Verticle
 import org.vertx.java.core.AsyncResult
 import org.vertx.java.core.Handler
-import org.vertx.java.core.json.JsonObject
 
 /**
  * シンプルなHTTPサーバ
@@ -31,6 +29,7 @@ class SimpleHttpServer extends Verticle {
     private static final List<String> workers = Collections.unmodifiableList([
         DigestVerticle.canonicalName,
     ])
+    private static final String WEB_ROOT = './client'
 
     @Override
     def start() {
@@ -44,31 +43,17 @@ class SimpleHttpServer extends Verticle {
         yoke.use(new Favicon())
         yoke.use('/', { YokeRequest req, Handler<?> next ->
             if (req.path() == '/') {
-                req.response().sendFile('./client/index.html')
+                req.response().sendFile("${WEB_ROOT}/index.html")
             } else {
                 next.handle(null)
             }
         })
-        yoke.use('/', new Static('./client'), new BodyParser())
-        yoke.use(
-            new GRouter().
-                get('/encrypt') { YokeRequest request, Handler<?> next ->
-                    request.response().end('Hello, Encrypted world!!!')
-                }.
-                get('/digest') { YokeRequest request, Handler<?> next ->
-                    YokeResponse response = request.response()
-                    vertx.eventBus.send("message-digest", createDigestRequest(request), { Message msg ->
-                        JsonObject res = msg.body() as JsonObject
-                        String status = res.getString("status")
-                        if ("ok" == status.toLowerCase()) {
-                            request.response().end(res)
-                        } else {
-                            response.setStatusCode(400)
-                            response.end(res)
-                        }
-                    })
-                }
-        )
+        yoke.use(new Static(WEB_ROOT))
+        yoke.use(new BodyParser())
+
+        Router router = new Router()
+        yoke.use(router)
+        router.get('/digest', new DigestHandler())
 
         workers.each {
             // デプロイされた Worker Verticle は、この Verticle がアンデプロイされた時に、
@@ -97,11 +82,5 @@ class SimpleHttpServer extends Verticle {
             }
             container.logger.info("Successfully deployed ${worker}.")
         })
-    }
-
-    private static JsonObject createDigestRequest(YokeRequest request) {
-        def req = new JsonObject()
-        def target = request.getParameter("target")
-        req.putString("target", target)
     }
 }
