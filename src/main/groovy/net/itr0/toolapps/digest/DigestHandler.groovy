@@ -15,10 +15,12 @@ import org.vertx.java.core.json.JsonObject
  */
 class DigestHandler extends Middleware {
 
+    EventBus eventBus = new EventBus(vertx.eventBus())
+
     @Override
     void handle(YokeRequest request, Handler<Object> next) {
         YokeResponse response = request.response()
-        new EventBus(vertx.eventBus()).send("message-digest", createDigestRequest(request), { Message msg ->
+        eventBus.send("message-digest", createDigestRequest(request), { Message msg ->
             JsonObject res = msg.body() as JsonObject
             String status = res.getString("status")
             if ("ok" == status.toLowerCase()) {
