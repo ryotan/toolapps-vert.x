@@ -1,4 +1,5 @@
 package net.itr0.toolapps.digest
+
 import com.jetdrone.vertx.yoke.Middleware
 import com.jetdrone.vertx.yoke.middleware.YokeRequest
 import com.jetdrone.vertx.yoke.middleware.YokeResponse
@@ -7,6 +8,7 @@ import org.vertx.groovy.core.eventbus.Message
 import org.vertx.java.core.Handler
 import org.vertx.java.core.Vertx
 import org.vertx.java.core.json.JsonObject
+
 /**
  *
  * @author ryotan
