@@ -1,13 +1,13 @@
 package net.itr0.toolapps.server
 
 import com.jetdrone.vertx.yoke.Middleware
+import com.jetdrone.vertx.yoke.MimeType
 import com.jetdrone.vertx.yoke.middleware.YokeRequest
 import com.jetdrone.vertx.yoke.middleware.YokeResponse
-import org.vertx.groovy.core.AsyncResult
-import org.vertx.groovy.core.file.FileSystem
+import org.vertx.java.core.AsyncResult
 import org.vertx.java.core.Handler
-import org.vertx.java.core.Vertx
 import org.vertx.java.core.file.FileProps
+import org.vertx.java.core.file.FileSystem
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -51,8 +51,6 @@ class Static extends Middleware {
      */
     private final DateFormat httpDateFormat
 
-    FileSystem fs
-
     /**
      * Create a new Static File Server Middleware that returns "index.html" when directory is requested,
      * and files are cached for 10 years.
@@ -91,74 +89,92 @@ class Static extends Middleware {
 
     @Override
     void handle(YokeRequest request, Handler<Object> next) {
-        def path = "${root}${request.path()}"
-
-        fs.exists(path, { AsyncResult<Boolean> existence ->
-            if (existence.failed) {
-                next.handle(existence.cause)
-            }
-
-            if (existence.result) {
-                sendFile(request, path, next)
+        FileSystem fs = vertx.fileSystem()
+        String path = request.normalizedPath()
+        fs.exists(path, new SimpleEventHandler<Boolean>(next, { boolean exists ->
+            if (exists) {
+                fs.props(path, new SimpleEventHandler<FileProps>(next, { FileProps props ->
+                    if (props.directory) {
+                        fs.exists(path, new SimpleEventHandler<Boolean>(next, { boolean exist ->
+                        }))
+                    } else if (props.regularFile) {
+                    } else {
+                        next.handle(null)
+                    }
+                }))
             } else {
                 next.handle(null)
             }
-        })
+        }))
     }
 
-    private FileSystem sendFile(YokeRequest request, String path, Handler<Object> next) {
-        fs.props(path, { AsyncResult<FileProps> propEvent ->
-            if (propEvent.failed) {
-                next.handle(propEvent.cause)
-            }
+    private void get(YokeRequest request, Handler<Object> next) {
+        String path = "${root}${request.path()}"
 
-            def prop = propEvent.result
-            def response = request.response()
-
-            if (prop.isDirectory()) {
-                sendIndexFile(response, prop, path)
+        FileSystem fs = vertx.fileSystem()
+        fs.props(path, new SimpleEventHandler<FileProps>(next, { FileProps props ->
+            if (props.directory) {
+                respondIfExists(request.response(), "${path}${index}", next)
+            } else if (props.regularFile) {
+                sendRequestedFile(request.response(), props, path)
             } else {
-                sendRequestedFile(response, prop, path)
+                next.handle(null)
             }
-        })
+        }))
     }
 
     private void sendRequestedFile(YokeResponse response, FileProps prop, String path) {
+        writeHeaders(response, prop, path)
+
+        if (isFresh(path)) {
+            response.setStatusCode(304)
+            response.end()
+        } else {
+            response.sendFile(path)
+        }
+    }
+
+    private void writeHeaders(YokeResponse response, FileProps prop, String path) {
         response.headers().add([
             date           : httpDateFormat.format(new Date()),
             'cache-control': "private, max-age=${maxAge}" as String,
-            etag           : "\"\"",
+            etag: "\"${prop.size()}-${prop.lastModifiedTime().getTime()}\"" as String,
             'last-modified': httpDateFormat.format(prop.lastModifiedTime()),
         ])
-        response.sendFile("${path}")
+
+        // write content type
+        String contentType = MimeType.getMime(path);
+        String charset = MimeType.getCharset(contentType);
+        response.setContentType(contentType, charset);
+        response.putHeader("Content-Length", String.valueOf(prop.size()));
     }
 
-    private void sendIndexFile(YokeResponse response, FileProps prop, String path) {
-        def index = "${path}${index}"
+    private boolean isFresh(String path) {
+        false
+    }
 
-        fs.exists(index, { AsyncResult<Boolean> indexExistence ->
-            if (indexExistence.failed) {
-                next.handle(indexExistence.cause)
+    private static class SimpleEventHandler<T> implements Handler<AsyncResult<T>> {
+
+        Handler<Object> next
+        Closure on
+
+        SimpleEventHandler(Handler<Object> next, Closure on) {
+            this.next = next
+            this.on = on
+        }
+
+        @Override
+        void handle(AsyncResult<T> event) {
+            if (event.failed()) {
+                next.handle(event.cause())
             }
-            if (indexExistence.result) {
-                response.headers().add([
-                    date           : httpDateFormat.format(new Date()),
-                    'cache-control': "private, max-age=${maxAge}" as String,
-                    etag           : "\"\"",
-                    'last-modified': httpDateFormat.format(prop.lastModifiedTime()),
-                ])
 
-                response.sendFile(index)
-            } else {
+            T result = event.result()
+            if (!result) {
                 next.handle(null)
+            } else {
+                on(result)
             }
-        })
-    }
-
-    @Override
-    Middleware init(Vertx vertx, String mount) {
-        super.init(vertx, mount)
-        fs = new FileSystem(vertx.fileSystem())
-        return this
+        }
     }
 }
